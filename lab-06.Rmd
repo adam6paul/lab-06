@@ -1,7 +1,7 @@
 ---
 title: "Lab 06 - Ugly charts and Simpson's paradox"
-author: "Insert your name here"
-date: "Insert date here"
+author: Adam Paul
+date: 5-6-2022
 output: github_document
 ---
 
@@ -9,23 +9,70 @@ output: github_document
 
 ```{r load-packages, message = FALSE}
 library(tidyverse) 
-library(dsbox)
 library(mosaicData) 
 ```
 
+```{r loading data, echo=TRUE, collapse=TRUE, message=FALSE}
+staff <- read_csv("data/instructional-staff.csv")
+```
+
+```{r making the data long}
+staff_long <- staff %>%
+  pivot_longer(cols = -faculty_type, names_to = "year") %>%
+  mutate(value = as.numeric(value))
+staff_long
+```
+
+
+
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+```{r starting line graph}
+staff_long %>%
+  ggplot(aes(x = year,
+             y = value,
+             group = faculty_type,
+             color = faculty_type)) +
+  geom_line() +
+  labs(
+    title= "Instructional Staff Employment Trends",
+    x= "Employment Year",
+    y= "% Employed",
+    color= "Faculty Type"
+  )
+
+
+```
+
+>Include the line plot you made above in your report and make sure the figure width is large enough to make it legible. Also fix the title, axis labels, and legend label.
+
+>Suppose the objective of this plot was to show that the proportion of part-time faculty have gone up over time compared to other instructional staff types. What changes would you propose making to this plot to tell this story?
+
+I think the graph effectively conveys this information. However, it can also be portrayed by using a stack chart. Colors are picked from a colorblind friendly palette. 
+
+```{r stack}
+
+staff_long %>%
+  ggplot(aes(x= value, y=year, fill= faculty_type)) +
+           geom_col() +
+  scale_fill_manual(values = c( 
+    "Full-Time Tenured Faculty" = "#E69F00",
+   "Full-Time Tenure-Track Faculty" = "#56B4E9",
+   "Full-Time Non-Tenure-Track Faculty" = "#009E73",
+    "Part-Time Faculty" = "#D55E00",
+    "Graduate Student Employees" = "#0072B2"))
+
+```
 
 ### Exercise 2
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+There is a terrible fisheries graph.
+
+```{r bringing in fisheries, echo=TRUE, collapse=TRUE, message=FALSE}
+fisheries <- read_csv("data/fisheries.csv")
+```
+
+>Can you help them make improve it? First, brainstorm how you would improve it. Then create the improved visualization and write up the changes/decisions you made as bullet points. It’s ok if some of your improvements are aspirational, i.e. you don’t know how to implement it, but you think it’s a good idea. Ask a tutor for help, but also keep an eye on the time. Implement what you can and leave note identifying the aspirational improvements.
 
 ### Exercise 3
 
